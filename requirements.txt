@@ -1,0 +1,7 @@
+aiogram>=3.0,<4.0
+fastapi
+uvicorn[standard]
+httpx
+pydantic
+pydantic-settings
+python-dotenv
