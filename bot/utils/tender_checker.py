@@ -117,7 +117,7 @@ async def check_new_tenders() -> int:
     last_id = await get_last_tender_id()
 
     if last_id is None:
-        new_tenders = tenders[MAX_FIRST_RUN_TENDERS:]
+        new_tenders = tenders[:MAX_FIRST_RUN_TENDERS]
         logger.info(f"First run: processing last {len(new_tenders)} tenders")
     else:
         new_tenders = [t for t in tenders if t.get("tenderID", "") > last_id]
