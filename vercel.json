@@ -11,11 +11,5 @@
       "src": "/(.*)",
       "dest": "api/index.py"
     }
-  ],
-  "crons": [
-    {
-      "path": "/cron/check-tenders",
-      "schedule": "0 * * * *"
-    }
   ]
 }

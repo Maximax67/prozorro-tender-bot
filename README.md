@@ -4,7 +4,7 @@ Telegram bot for monitoring new procurements on prozorro.gov.ua.
 
 ## Features
 
-- Hourly checking for new tenders via Vercel Cron
+- Checking for new tenders via cron job
 - Sending notifications with procurement details and attached documents
 - Manual check using the `/check` command
 - State management via Upstash Redis (serverless-friendly)
@@ -52,6 +52,8 @@ To trigger it manually:
 curl -X GET https://your-app.vercel.app/cron/check-tenders \
   -H "Authorization: Bearer your_cron_secret"
 ```
+
+For production you can setup cron job via [cron-job.org](https://cron-job.org).
 
 ## Bot Commands
 
