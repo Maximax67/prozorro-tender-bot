@@ -44,7 +44,7 @@ async def status_handler(message: Message) -> None:
     if last_id:
         await message.answer(
             f"📋 Останній оброблений тендер:\n<code>{last_id}</code>\n\n"
-            f"🔗 https://prozorro.gov.ua/tender/{last_id}"
+            f"🔗 https://prozorro.gov.ua/uk/tender/{last_id}"
         )
     else:
         await message.answer("ℹ️ Ще не оброблено жодного тендера")
