@@ -49,7 +49,7 @@ Cron triggers a `GET /cron/check-tenders` request. For authorization, the follow
 To trigger it manually:
 
 ```bash
-curl -X GET [https://your-app.vercel.app/cron/check-tenders](https://your-app.vercel.app/cron/check-tenders) \
+curl -X GET https://your-app.vercel.app/cron/check-tenders \
   -H "Authorization: Bearer your_cron_secret"
 ```
 
