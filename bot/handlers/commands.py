@@ -4,6 +4,7 @@ from aiogram.types import Message
 
 from app.core.logger import logger
 from app.core.settings import settings
+from bot.utils.commands import set_chat_commands
 from bot.utils.tender_checker import check_new_tenders
 from bot.utils.upstash import get_last_tender_id
 
@@ -20,6 +21,7 @@ async def start_handler(message: Message) -> None:
         "/check — перевірити нові закупівлі зараз\n"
         "/status — переглянути останній оброблений тендер"
     )
+    await set_chat_commands()
 
 
 @router.message(Command("check"), ADMIN_FILTER)

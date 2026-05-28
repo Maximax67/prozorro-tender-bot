@@ -4,6 +4,7 @@ from app.core.logger import logger
 from app.core.settings import settings
 from bot.dispatcher import dp
 from bot.instance import bot
+from bot.utils.commands import set_chat_commands
 from bot.utils.tender_checker import check_new_tenders
 
 
@@ -24,6 +25,7 @@ async def main() -> None:
         await bot.delete_webhook(drop_pending_updates=True)
         logger.info("Webhook removed, switching to polling")
 
+    await set_chat_commands()
     check_task = asyncio.create_task(periodic_check())
 
     try:
