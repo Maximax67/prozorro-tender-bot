@@ -14,16 +14,16 @@ SUPPORTED_FORMATS: dict[str, str] = {
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ".docx",
 }
 
+TENDER_LIST_PARAMS: dict[str, str] = {
+    "buyer[0]": settings.BUYER_ID,
+    "sort_by": "tenderID",
+    "order": "desc",
+}
+
 
 async def fetch_tenders_list() -> list[dict[str, Any]]:
-    params: dict[str, str] = {
-        "buyer[0]": settings.BUYER_ID,
-        "sort_by": "tenderID",
-        "order": "desc",
-    }
-
     async with httpx.AsyncClient(timeout=30.0) as client:
-        response = await client.post(SEARCH_URL, params=params)
+        response = await client.post(SEARCH_URL, params=TENDER_LIST_PARAMS)
         response.raise_for_status()
         response_data = response.json()
         data: list[dict[str, Any]] = response_data.get("data", [])

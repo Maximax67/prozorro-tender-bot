@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     BUYER_ID: str
     WEBHOOK_URL: HttpUrl | None = None
     WEBHOOK_SECRET: SecretStr | None = None
+    WEBHOOK_MANAGE_TOKEN: SecretStr | None = None
     MODE: str = "webhook"
 
     APP_TITLE: str = "Prozorro Tender Bot"

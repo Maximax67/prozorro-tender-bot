@@ -38,9 +38,29 @@ Telegram bot for monitoring new procurements on prozorro.gov.ua.
 
 1. Install Vercel CLI: `npm i -g vercel`
 2. Set up all environment variables in your Vercel project (Settings → Environment Variables):
-   - The same variables as in `.env.example`, plus `WEBHOOK_URL=https://your-app.vercel.app` and `WEBHOOK_SECRET=some_random_secret_string`
+   - The same variables as in `.env.example`, plus `WEBHOOK_URL=https://your-app.vercel.app`, `WEBHOOK_SECRET=some_random_secret_string` (optional), and `WEBHOOK_MANAGE_TOKEN=your_admin_secret_string` (optional)
    - `MODE=webhook`
 3. Deploy: `vercel --prod`
+
+### Webhook Management
+
+Since this application runs in a serverless ecosystem, the webhook is **not** configured automatically during application startup. You must manually trigger the registration after a deployment or when environment variables change.
+
+Both administrative routes require an `Authorization` header utilizing your `WEBHOOK_MANAGE_TOKEN`.
+
+**To Setup the Webhook:**
+
+```bash
+curl -X POST https://your-app.vercel.app/webhook/setup \
+  -H "Authorization: Bearer your_webhook_manage_token"
+```
+
+**To Delete the Webhook:**
+
+```bash
+curl -X POST https://your-app.vercel.app/webhook/delete \
+  -H "Authorization: Bearer your_webhook_manage_token"
+```
 
 ### Securing the Cron Endpoint
 
