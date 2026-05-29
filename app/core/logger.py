@@ -1,5 +1,6 @@
 import logging
 from logging.config import dictConfig
+import sys
 
 LOGGING_CONFIG = {
     "version": 1,
@@ -8,14 +9,21 @@ LOGGING_CONFIG = {
         "default": {"format": "%(levelname)s | %(asctime)s | %(name)s | %(message)s"},
     },
     "handlers": {
-        "console": {
+        "stdout": {
             "class": "logging.StreamHandler",
             "formatter": "default",
+            "stream": sys.stdout,
+        },
+        "stderr": {
+            "class": "logging.StreamHandler",
+            "formatter": "default",
+            "stream": sys.stderr,
+            "level": "ERROR",
         },
     },
     "loggers": {
         "app": {
-            "handlers": ["console"],
+            "handlers": ["stdout", "stderr"],
             "level": "INFO",
             "propagate": False,
         },

@@ -77,6 +77,7 @@ async def _send_tender_notification(tender: dict[str, Any]) -> None:
     text = format_tender_message(tender, is_contract and has_doc)
 
     if has_doc and file_bytes is not None:
+        logger.info(f"Found tender {tender_id} document")
         try:
             document = BufferedInputFile(
                 file=BytesIO(file_bytes).read(),
@@ -93,6 +94,8 @@ async def _send_tender_notification(tender: dict[str, Any]) -> None:
             logger.error(f"Failed to send document for {tender_id}: {e}")
             # Fall through to sending text-only with error note
             text += f"\n\n⚠️ <i>Не вдалось надіслати файл: {e}</i>"
+    else:
+        logger.warning(f"Documents not found for tender {tender_id}")
 
     await bot.send_message(
         chat_id=settings.CHAT_ID,
@@ -138,8 +141,11 @@ async def check_new_tenders() -> int:
         try:
             logger.info(f"Processing tender {tender_id}")
             details = await fetch_tender_details(tender_id)
+            logger.info(f"Fetched tender {tender_id} details")
             await _send_tender_notification(details)
+            logger.info(f"Tender {tender_id} notification sent")
             await set_last_tender_id(tender_id)
+            logger.info(f"Updated last tender id to {tender_id}")
             processed += 1
         except Exception as e:
             logger.error(f"Failed to process tender {tender_id}: {e}")
