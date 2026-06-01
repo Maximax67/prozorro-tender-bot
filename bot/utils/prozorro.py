@@ -110,41 +110,44 @@ def find_contract_document(
     contract_number: str | None = None,
 ) -> dict[str, Any] | None:
     docs = flatten_public_documents(public_docs)
+    if not docs:
+        return None
+
     contract_num_lower = contract_number.lower() if contract_number else None
 
     best_doc: dict[str, Any] | None = None
-    best_tier = float("inf")  # Lower number means better tier
+    best_tier = 5
 
     for doc in docs:
         fmt = doc.get("format", "")
-        is_supported = fmt in SUPPORTED_FORMATS
-
         doc_type = doc.get("documentType", "")
-        title_lower = doc.get("title", "").lower()
+        is_contract_signed = doc_type == "contractSigned"
 
-        # Tier 1: Contract number matches + type is contractSigned + supported format
-        if (
-            contract_num_lower
-            and contract_num_lower in title_lower
-            and doc_type == "contractSigned"
-            and is_supported
-        ):
-            return doc  # Absolute best match, exit early immediately!
+        # Tier 0 & 1 check
+        if contract_num_lower and contract_num_lower in doc.get("title", "").lower():
+            if is_contract_signed:
+                if fmt == "application/pdf":
+                    return doc  # Tier 0: Absolute best, exit immediately!
 
-        # Tier 2: contractSigned type + supported format
-        if best_tier > 2 and doc_type == "contractSigned" and is_supported:
+                if best_tier > 1 and fmt in SUPPORTED_FORMATS:
+                    best_doc = doc
+                    best_tier = 1
+                    continue
+
+        # Tier 2 Check
+        if best_tier > 2 and is_contract_signed and fmt in SUPPORTED_FORMATS:
             best_doc = doc
             best_tier = 2
-            continue  # Skip lower tier checks for this specific document
+            continue
 
-        # Tier 3: any PDF
+        # Tier 3 Check
         if best_tier > 3 and fmt == "application/pdf":
             best_doc = doc
             best_tier = 3
             continue
 
-        # Tier 4: any supported format
-        if best_tier > 4 and is_supported:
+        # Tier 4 Check
+        if best_tier > 4 and fmt in SUPPORTED_FORMATS:
             best_doc = doc
             best_tier = 4
 
