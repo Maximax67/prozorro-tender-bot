@@ -107,31 +107,45 @@ def find_addendum3(
 
 def find_contract_document(
     public_docs: dict[str, list[dict[str, Any]]] | Any,
+    contract_number: str | None = None,
 ) -> dict[str, Any] | None:
     docs = flatten_public_documents(public_docs)
+    contract_num_lower = contract_number.lower() if contract_number else None
 
-    # First: contractSigned type
-    for doc in docs:
-        doc_type: str = doc.get("documentType", "")
-        fmt: str = doc.get("format", "")
-        if doc_type == "contractSigned" and fmt in SUPPORTED_FORMATS:
-            return doc
+    best_doc: dict[str, Any] | None = None
+    best_tier = float("inf")  # Lower number means better tier
 
-    # Second: title contains "договір"
     for doc in docs:
-        title: str = doc.get("title", "")
         fmt = doc.get("format", "")
-        if "договір" in title.lower() and fmt in SUPPORTED_FORMATS:
-            return doc
+        is_supported = fmt in SUPPORTED_FORMATS
 
-    # Third: any PDF
-    for doc in docs:
-        if doc.get("format") == "application/pdf":
-            return doc
+        doc_type = doc.get("documentType", "")
+        title_lower = doc.get("title", "").lower()
 
-    # Fourth: any supported format
-    for doc in docs:
-        if doc.get("format", "") in SUPPORTED_FORMATS:
-            return doc
+        # Tier 1: Contract number matches + type is contractSigned + supported format
+        if (
+            contract_num_lower
+            and contract_num_lower in title_lower
+            and doc_type == "contractSigned"
+            and is_supported
+        ):
+            return doc  # Absolute best match, exit early immediately!
 
-    return None
+        # Tier 2: contractSigned type + supported format
+        if best_tier > 2 and doc_type == "contractSigned" and is_supported:
+            best_doc = doc
+            best_tier = 2
+            continue  # Skip lower tier checks for this specific document
+
+        # Tier 3: any PDF
+        if best_tier > 3 and fmt == "application/pdf":
+            best_doc = doc
+            best_tier = 3
+            continue
+
+        # Tier 4: any supported format
+        if best_tier > 4 and is_supported:
+            best_doc = doc
+            best_tier = 4
+
+    return best_doc

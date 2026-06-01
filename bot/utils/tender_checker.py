@@ -38,8 +38,9 @@ async def _find_and_download_document(
 
         try:
             contract_details = await fetch_contract_details(contract_id)
+            contract_number = contract_details.get("contractNumber", None)
             pub_docs = contract_details.get("publicDocuments", {})
-            doc = find_contract_document(pub_docs)
+            doc = find_contract_document(pub_docs, contract_number)
             if doc:
                 url: str = doc.get("url", "")
                 title: str = doc.get("title", "contract")
